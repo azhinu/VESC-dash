@@ -15,6 +15,9 @@ Transparent BLE-UART proxy for VESC tool.
 3. Connect `G` pin to VESC `Ground`.
 4. Connect `RX` pin to VESC `TX` and `TX` pin to VESC `RX`.
 
+**Light control**
+First button will activate `HIGH` signal on `LIGHT_PIN`. In my scooter it activates the light.
+
 Now you can use T-Display as dashboard and bluetooth relay.
 
 </br>
