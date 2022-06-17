@@ -6,7 +6,7 @@
 TFT_eSPI tft = TFT_eSPI();  // Initiate a display object
 // calculate the estimated value with Kalman Filter
 SimpleKalmanFilter PowerFilter(2, 2, 0.1); // Initiate Kalman Filter
-SimpleKalmanFilter VoltageFilter(5, 5, 0.01); // Initiate Kalman Filter
+SimpleKalmanFilter BatteryFilter(5, 5, 0.1); // Initiate Kalman Filter
 
 // Vars
 int rpm;
@@ -23,12 +23,12 @@ Display::Display() {}
 
 void draw(VescUart UART) {
   // Read Vesc telemetry
-  rpm = UART.data.rpm / (Poles / 2);                                             // UART.data.rpm returns eRPM.  Divide by no of pole pairs in the motor for actual. 
-  voltage = VoltageFilter.updateEstimate(UART.data.inpVoltage);                  // Battery Voltage
-  current = (UART.data.avgInputCurrent);                                         // Current Draw
-  power = PowerFilter.updateEstimate(voltage*current);                           // Power = Voltage x Current
-  velocity = rpm*3.142*WheelDia*GearReduction*60/1000;                           // Motor RPM x Pi x Wheel diameter x (motor pulley / wheelpulley) * 60 minutes in hour / 1000 meters in kilometer
-  batpercentage = ((voltage-(BatteryMinVoltage*BatteryCells))/BatteryCells)*100; // Based on a minimum cell charge
+  rpm = UART.data.rpm / (Poles / 2);                              // UART.data.rpm returns eRPM.  Divide by no of pole pairs in the motor for actual. 
+  voltage = (UART.data.inpVoltage);                               // Battery Voltage
+  current = (UART.data.avgInputCurrent);                          // Current Draw
+  power = PowerFilter.updateEstimate(voltage*current);            // Power = Voltage x Current
+  velocity = rpm*3.142*WheelDia*GearReduction*60/1000;            // Motor RPM x Pi x Wheel diameter x (motor pulley / wheelpulley) * 60 minutes in hour / 1000 meters in kilometer
+  batpercentage = BatteryFilter.updateEstimate(((voltage-(BatteryMinVoltage*BatteryCells))/BatteryCells)*100); // Filtered value, based on a minimum cell charge
   
   // Adjust the below to show apparently legal values
   //if(velocity>18) velocity = 17 + (velocity / 7)  // If velocity > 18, value will be reduced
