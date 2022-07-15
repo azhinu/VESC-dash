@@ -6,7 +6,7 @@
 TFT_eSPI tft = TFT_eSPI();  // Initiate a display object
 // calculate the estimated value with Kalman Filter
 SimpleKalmanFilter PowerFilter(2, 2, 0.1); // Initiate Kalman Filter
-SimpleKalmanFilter BatteryFilter(5, 5, 0.1); // Initiate Kalman Filter
+SimpleKalmanFilter BatteryFilter(4, 4, 0.1); // Initiate Kalman Filter
 
 // Vars
 int rpm;
@@ -34,12 +34,30 @@ void draw(VescUart UART) {
   //if(velocity>18) velocity = 17 + (velocity / 7)  // If velocity > 18, value will be reduced
   //powerfiltered = powerfiltered / 6 //Read 0 to 250W
 
+  // Convert to fixed leght string
+
+  String velocitySRT;
+  String powerSRT;
+
+  if (velocity < 0) {velocitySRT = String(velocity);}
+  else if (velocity < 10) {velocitySRT = String("  " + String(velocity));}
+  else {velocitySRT = String(velocity);}
+
+  if (power < -10) {powerSRT = String("0" + String(power));}
+  else if (power < 0) {powerSRT = String("00" + String(power));}
+  else if (power < 10) {powerSRT = String("000" + String(power));}
+  else if (power < 100) {powerSRT = String("00" + String(power));}
+  else if (power < 1000) {powerSRT = String("0" + String(power));}
+  else {powerSRT = String(power);}
+  
+  
+
 
   // Draw data
   
   // First line  
   tft.setTextColor(Orange, Black);
-  tft.drawRightString(String(velocity), 80, 3, 7);
+  tft.drawRightString(velocitySRT, 80, 3, 7);
   tft.drawString("km/h", 85, 3, 2);
 
   //Change Battery Percentage colour based on value
@@ -54,7 +72,7 @@ void draw(VescUart UART) {
    
   // Second line
   tft.setTextColor(Green, Black);
-  tft.drawRightString(String(power), 75, 80, 7);
+  tft.drawRightString(powerSRT, 75, 80, 7);
   tft.drawString("W", 130, 80, 2);
 
   tft.setTextColor(Red, Black);
