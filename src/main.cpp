@@ -49,13 +49,18 @@ void loop() {
     last_display_update = millis(); // update the last display update time
   }
 
-  // Turn on/off the light
-  if (digitalRead(BTN1) == LOW && millis() - last_btn_update > 500) {
-    light = !light;
-    digitalWrite(LIGHT_PIN, light);
-    last_btn_update = millis();
-    #if DEBUG > 0
-      Serial.println("Light status now is " + String(light));
-    #endif
-  }
+  #if BTN_MODE == 1
+    // Use BTN1 as Switch button
+    if (digitalRead(BTN1) == LOW && millis() - last_btn_update > 500) {
+      light = !light;
+      digitalWrite(LIGHT_PIN, light);
+      last_btn_update = millis();
+      #if DEBUG > 0
+        Serial.println("Light status now is " + String(light));
+      #endif
+    }
+  #elif BTN_MODE == 2
+  // Passthrought BTN1
+    digitalWrite(LIGHT_PIN, digitalRead(BTN1));
+  #endif
 }
