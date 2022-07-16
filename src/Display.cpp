@@ -28,7 +28,7 @@ void draw(VescUart UART) {
   current = (UART.data.avgInputCurrent);                          // Current Draw
   power = PowerFilter.updateEstimate(voltage*current);            // Power = Voltage x Current
   velocity = rpm*3.142*WheelDia*GearReduction*60/1000;            // Motor RPM x Pi x Wheel diameter x (motor pulley / wheelpulley) * 60 minutes in hour / 1000 meters in kilometer
-  batpercentage = BatteryFilter.updateEstimate(((voltage-(BatteryMinVoltage*BatteryCells))/BatteryCells)*100); // Filtered value, based on a minimum cell charge
+  batpercentage = BatteryFilter.updateEstimate((voltage-BatteryMinVoltage)/(BatteryMaxVoltage-BatteryMinVoltage)*100); // Filtered value, based on a minimum and maximum cell charge
   
   // Adjust the below to show apparently legal values
   //if(velocity>18) velocity = 17 + (velocity / 7)  // If velocity > 18, value will be reduced
@@ -50,7 +50,8 @@ void draw(VescUart UART) {
   else if (power < 1000) {powerSRT = String("0" + String(power));}
   else {powerSRT = String(power);}
   
-  
+  // Set 99% as the maximum value to avoid stuck digit on display.
+  if (batpercentage > 100) batpercentage = 99;
 
 
   // Draw data

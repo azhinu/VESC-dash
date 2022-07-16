@@ -21,10 +21,10 @@
 
 //Display setup
 #define Poles 30                            //Usually 30 for e-scooter
-#define WheelDia 0.24                      //Wheel diameter in meters. 10" tire diameter is about 0.25m
+#define WheelDia 0.24                       //Wheel diameter in meters. 10" tire diameter is about 0.25m
 #define GearReduction 1                     //reduction ratio. 1 for direct drive. Otherwise motor pulley diameter / Wheel pulley diameter.
-#define BatteryCells 13                     //Number of battery series cells
-#define BatteryMinVoltage 3.2               //Minimum Battery cell Voltage
+#define BatteryMinVoltage 41.6              //Minimum Battery Voltage = Cell voltage min * Number of cells
+#define BatteryMaxVoltage 53.3              //Maximum Battery Voltage = Cell voltage max * Number of cells
 #define SplashScreenFirstLine "ESP32"       //First line of Splash Screen
 #define SplashScreenSecondLine "Starting"   //Second line of Splash Screen
 #define SplashScreenThirdLine "..."         //Third line of Splash Screen
