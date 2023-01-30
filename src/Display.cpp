@@ -1,10 +1,10 @@
-// This module is based on code by SimonRafferty
-// https://github.com/SimonRafferty/VESC_ESP32_Display
-
 #include "Display.h"
 
-TFT_eSPI tft = TFT_eSPI();  // Initiate a display object
-// calculate the estimated value with Kalman Filter
+/* Declare LCD object for SPI
+ Adafruit_PCD8544(CLK,DIN,D/C,CE,RST); */
+Adafruit_PCD8544 oled = Adafruit_PCD8544(18, 21, 4, 5, 14);
+
+// Calculate the estimated value with Kalman Filter
 SimpleKalmanFilter PowerFilter(2, 2, 0.1); // Initiate Kalman Filter
 SimpleKalmanFilter BatteryFilter(4, 4, 0.1); // Initiate Kalman Filter
 
@@ -21,6 +21,28 @@ bool dataErr;
 
 Display::Display() {}
 
+void Display::init() {
+
+  /* Initialize the Display*/
+  oled.begin();
+  // Display size is 84 x 48 pixels
+  oled.setContrast(60); // Set contrast
+  oled.clearDisplay(); // Clear framebuffer
+  
+  /* Now let us display some text */
+  oled.setTextColor(WHITE, BLACK);
+  oled.setCursor(0,8);
+  oled.setTextSize(2);
+  oled.println("   VESC  DASH ");
+  oled.setTextColor(BLACK);
+  oled.display();
+  delay(2000);
+
+#if DEBUG > 0
+  Serial.println("Display init done...");
+#endif 
+}
+
 void draw(VescUart UART) {
   // Read Vesc telemetry
   rpm = UART.data.rpm / (Poles / 2);                              // UART.data.rpm returns eRPM.  Divide by no of pole pairs in the motor for actual. 
@@ -33,73 +55,45 @@ void draw(VescUart UART) {
   // Adjust the below to show apparently legal values
   //if(velocity>18) velocity = 17 + (velocity / 7)  // If velocity > 18, value will be reduced
   //powerfiltered = powerfiltered / 6 //Read 0 to 250W
-
-  // Convert to fixed leght string
-
-  String velocitySRT;
-  String powerSRT;
-
-  if (velocity < 0) {velocitySRT = String(velocity);}
-  else if (velocity < 10) {velocitySRT = String("  " + String(velocity));}
-  else {velocitySRT = String(velocity);}
-
-  if (power < -10) {powerSRT = String("0" + String(power));}
-  else if (power < 0) {powerSRT = String("00" + String(power));}
-  else if (power < 10) {powerSRT = String("000" + String(power));}
-  else if (power < 100) {powerSRT = String("00" + String(power));}
-  else if (power < 1000) {powerSRT = String("0" + String(power));}
-  else {powerSRT = String(power);}
   
-  // Set 99% as the maximum value to avoid stuck digit on display.
+  // Set 99% as the maximum value to avoid digit overlap.
   if (batpercentage > 100) batpercentage = 99;
 
 
   // Draw data
   
-  // First line  
-  tft.setTextColor(Orange, Black);
-  tft.drawRightString(velocitySRT, 80, 3, 7);
-  tft.drawString("km/h", 85, 3, 2);
+  oled.clearDisplay(); // Clear framebuffer
+  // Speed value
+  oled.setCursor(0,1);
+  oled.setTextSize(2);
+  oled.println(velocity);
+  oled.setTextSize(1);
+  oled.setCursor(25,1);
+  oled.println("km/h");
+  // Power value
+  oled.setCursor(0,28);
+  oled.setTextSize(2);
+  oled.println(power);
+  oled.setCursor(48,28);
+  oled.setTextSize(1);
+  oled.println("W");
+  // Battery percentage
+  oled.setCursor(54,1);
+  oled.setTextSize(2);
+  oled.println(batpercentage);
+  oled.setCursor(78,1);
+  oled.setTextSize(1);
+  oled.println("%");
+  // Battery voltage
+  oled.setCursor(54,28);
+  oled.setTextSize(2);
+  oled.println(voltage);
+  oled.setCursor(78,28);
+  oled.setTextSize(1);
+  oled.println("v");
 
-  //Change Battery Percentage colour based on value
-  tft.setTextColor(Red, Black); 
-  if(batpercentage>30) tft.setTextColor(Orange, Black); 
-  if(batpercentage>50) tft.setTextColor(Yellow, Black); 
-  if(batpercentage>80) tft.setTextColor(Green, Black); 
 
-  tft.drawRightString(String(batpercentage), 220, 3, 7);
-  tft.drawString("%", 223, 3, 2);
-
-   
-  // Second line
-  tft.setTextColor(Green, Black);
-  tft.drawRightString(powerSRT, 75, 80, 7);
-  tft.drawString("W", 130, 80, 2);
-
-  tft.setTextColor(Red, Black);
-  tft.drawRightString(String(int(voltage)), 225, 80, 7);
-  tft.drawString("V", 228, 80, 2);
-}
-void Display::init() {
-
-  tft.init();
-  tft.setRotation(1);
-  tft.fillScreen(TFT_BLACK);
-
-  tft.setTextColor(Orange);
-
-  //Splash Screen
-  tft.drawCentreString(SplashScreenFirstLine, Disp_H/2, 10, 4);
-  tft.drawCentreString(SplashScreenSecondLine, Disp_H/2, 45, 4);
-  tft.setTextColor(Yellow);
-  tft.drawCentreString(SplashScreenThirdLine, Disp_H/2, 90, 4);
-  
-  delay(3000);
-  tft.fillScreen(TFT_BLACK);
-
-#if DEBUG > 0
-  Serial.println("Display init done...");
-#endif 
+  oled.display(); // Apply framebuffer
 }
 
 void Display::loop(VescUart UART) {
@@ -108,13 +102,17 @@ void Display::loop(VescUart UART) {
  if ( UART.getVescValues() ) {
   // Clear screen and reset flag if UART error occured
   if (dataErr){
-    tft.fillScreen(TFT_BLACK);
+    oled.clearDisplay();
+    oled.display();
     dataErr = false;
   }
   draw(UART);
   } else {
   dataErr = true; // Set flag if UART error occured
-  tft.setTextColor(Orange, Black);
-  tft.drawCentreString("No Data!", Disp_H/2, 10, 4);
+  oled.clearDisplay();
+  oled.setCursor(0,16);
+  oled.setTextSize(2);
+  oled.println("No data");
+  oled.display();
   }
 }

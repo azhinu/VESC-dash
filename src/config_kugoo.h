@@ -2,8 +2,8 @@
 #define __CONFIG_H__
 
 // Base setup
-#define BTN2 0  // BTN1 GPIO pin
-#define BTN1 35 // BTN2 GPIO pin
+#define BTN1 0  // BTN1 GPIO pin
+#define BTN2 35 // BTN2 GPIO pin
 
 #define VESC_BAUD_RATE 115200  // VESC UART baud rate
 
@@ -18,7 +18,7 @@
 
 //Display setup
 #define Poles 30                            //Usually 30 for e-scooter
-#define WheelDia 0.24                       //Wheel diameter in meters. 10" tire diameter is about 0.25m
+#define WheelDia 0.24                      //Wheel diameter in meters. 10" tire diameter is about 0.25m
 #define GearReduction 1                     //reduction ratio. 1 for direct drive. Otherwise motor pulley diameter / Wheel pulley diameter.
 #define BatteryMinVoltage 41.6              //Minimum Battery Voltage = Cell voltage min * Number of cells
 #define BatteryMaxVoltage 53.3              //Maximum Battery Voltage = Cell voltage max * Number of cells

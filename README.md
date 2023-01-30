@@ -1,7 +1,12 @@
-# VESC T-Display dashboard
+# VESC ESP32 dashboard
 
-This repository contains code for TTGO T-Display board to let it use as dashboard for any VESC based ESC.
+This repository contains code for ESP32 board with Nokia 5110 display to let it use as dashboard for any VESC based ESC.
 Compatible with FW5.3
+
+## THIS REPO IS JUST A DRAFT AND NOT TESTED
+
+</br>
+</br>
 
 ## Features
 
@@ -17,9 +22,7 @@ Transparent BLE-UART proxy for VESC tool.
    1. Optional: I recommend you to use 10µF capacitor between `V+` and `G` pin to avoid unstable behavior.
 3. Connect `G` pin to VESC `Ground`.
 4. Connect `RX` pin to VESC `TX` and `TX` pin to VESC `RX`.
-5. Now you can use T-Display as dashboard and bluetooth relay.
-
-You can also install buzzer, but case in this repo doesn't have a space for it.
+5. Now you can use your module as dashboard and bluetooth relay.
 
 **Use buttons**
 

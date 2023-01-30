@@ -1,14 +1,12 @@
 #include <Arduino.h>
 #include "config.h"
-#include "BleBridge.h"
+// #include "BleBridge.h"
 #include "Display.h"
-// #include "Buzzer.h"
 
 HardwareSerial vesc(2);              // Initiate Vesc Uart object
 VescUart UART;                       // Initiate VescUart class
-BleBridge *bridge = new BleBridge(); // Initiate BleBridge object
+// BleBridge *bridge = new BleBridge(); // Initiate BleBridge object
 Display *display = new Display();    // Initiate Display object
-// Buzzer *buzzer = new Buzzer();    // Initiate Buzzer object
 
 bool light = true; // Light status flag
 static u_int32_t last_display_update; // Display update timer
@@ -30,7 +28,7 @@ void setup() {
   vesc.begin(VESC_BAUD_RATE, SERIAL_8N1, VESC_RX_PIN, VESC_TX_PIN, false);  // Start UART communication    
   UART.setSerialPort(&vesc); // Set serial port to VescUart object
   
-  bridge->init(&vesc); // initialize the UART bridge from VESC to Bluetooth
+  // bridge->init(&vesc); // initialize the UART bridge from VESC to Bluetooth
   display->init(); // initialize the display
 
   // buzzer->startSequence(); // initialize the buzzer
@@ -38,7 +36,7 @@ void setup() {
 
 void loop() {
   
-  bridge->loop(); // call the VESC UART-to-Bluetooth bridge
+  // bridge->loop(); // call the VESC UART-to-Bluetooth bridge
 
   // call the display once per second
   if (millis() - last_display_update > 1000) {
