@@ -21,6 +21,28 @@ bool dataErr;
 
 Display::Display() {}
 
+void Display::init() {
+
+  tft.init();
+  tft.setRotation(1);
+  tft.fillScreen(TFT_BLACK);
+
+  tft.setTextColor(Orange);
+
+  //Splash Screen
+  tft.drawCentreString(SplashScreenFirstLine, Disp_H/2, 10, 4);
+  tft.drawCentreString(SplashScreenSecondLine, Disp_H/2, 45, 4);
+  tft.setTextColor(Yellow);
+  tft.drawCentreString(SplashScreenThirdLine, Disp_H/2, 90, 4);
+  
+  delay(3000);
+  tft.fillScreen(TFT_BLACK);
+
+#if DEBUG > 0
+  Serial.println("Display init done...");
+#endif 
+}
+
 void draw(VescUart UART) {
   // Read Vesc telemetry
   rpm = UART.data.rpm / (Poles / 2);                              // UART.data.rpm returns eRPM.  Divide by no of pole pairs in the motor for actual. 
@@ -79,27 +101,6 @@ void draw(VescUart UART) {
   tft.setTextColor(Red, Black);
   tft.drawRightString(String(int(voltage)), 225, 80, 7);
   tft.drawString("V", 228, 80, 2);
-}
-void Display::init() {
-
-  tft.init();
-  tft.setRotation(1);
-  tft.fillScreen(TFT_BLACK);
-
-  tft.setTextColor(Orange);
-
-  //Splash Screen
-  tft.drawCentreString(SplashScreenFirstLine, Disp_H/2, 10, 4);
-  tft.drawCentreString(SplashScreenSecondLine, Disp_H/2, 45, 4);
-  tft.setTextColor(Yellow);
-  tft.drawCentreString(SplashScreenThirdLine, Disp_H/2, 90, 4);
-  
-  delay(3000);
-  tft.fillScreen(TFT_BLACK);
-
-#if DEBUG > 0
-  Serial.println("Display init done...");
-#endif 
 }
 
 void Display::loop(VescUart UART) {
