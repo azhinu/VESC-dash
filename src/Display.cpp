@@ -65,7 +65,7 @@ void draw(VescUart UART) {
   else if (velocity < 10) {velocitySRT = String("  " + String(velocity));}
   else {velocitySRT = String(velocity);}
 
-  if (power < -10) {powerSRT = String("0" + String(power));}
+  if (power < -9) {powerSRT = String("0" + String(power));}
   else if (power < 0) {powerSRT = String("00" + String(power));}
   else if (power < 10) {powerSRT = String("000" + String(power));}
   else if (power < 100) {powerSRT = String("00" + String(power));}
@@ -73,7 +73,7 @@ void draw(VescUart UART) {
   else {powerSRT = String(power);}
   
   // Set 99% as the maximum value to avoid stuck digit on display.
-  if (batpercentage > 100) batpercentage = 99;
+  if (batpercentage > 99) batpercentage = 99;
 
 
   // Draw data
